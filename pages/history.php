@@ -10,6 +10,7 @@ $web_root = "../";
     <title>History - Center for Entrepreneurship</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
 </head>
 <body class="font-sans text-gray-800">
     <!-- Your existing header would go here -->

@@ -20,7 +20,7 @@ if (!isset($web_root)) {
                 <h3 class="text-xl font-bold mb-4">About Us</h3>
                 <p class="text-gray-300 mb-4">The Center for Entrepreneurship at Catholic University of Rwanda empowers students with skills and knowledge to become successful entrepreneurs and leaders.</p>
                 <div class="flex items-center">
-                    <img src="<?php echo $web_root; ?>assets/images/logo-white.png" alt="CUR Logo" class="h-16 mr-3">
+                    <img src="<?php echo $web_root; ?>/images/logo.png" alt="CUR Logo" class="h-16 mr-3">
                 </div>
             </div>
             
@@ -98,7 +98,7 @@ if (!isset($web_root)) {
                 <p class="text-gray-300 mb-2">Subscribe for updates</p>
                 <form class="flex">
                     <input type="email" placeholder="Your email" class="px-3 py-2 bg-blue-800 text-white placeholder-gray-400 border border-blue-700 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 flex-grow">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r transition-colors">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-r transition-colors">
                         Subscribe
                     </button>
                 </form>

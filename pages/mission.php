@@ -32,7 +32,7 @@ $web_root = "../";
             <section class="mb-16">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="md:w-1/3 mb-8 md:mb-0">
-                        <div class="bg-blue-800 text-white rounded-full w-48 h-48 flex items-center justify-center mx-auto">
+                        <div class="bg-blue-900 text-white rounded-full w-48 h-48 flex items-center justify-center mx-auto">
                             <h2 class="text-3xl font-bold">Our Mission</h2>
                         </div>
                     </div>
@@ -47,7 +47,7 @@ $web_root = "../";
             <section class="mb-16">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="md:order-2 md:w-1/3 mb-8 md:mb-0">
-                        <div class="bg-blue-600 text-white rounded-full w-48 h-48 flex items-center justify-center mx-auto">
+                        <div class="bg-blue-900 text-white rounded-full w-48 h-48 flex items-center justify-center mx-auto">
                             <h2 class="text-3xl font-bold">Our Vision</h2>
                         </div>
                     </div>

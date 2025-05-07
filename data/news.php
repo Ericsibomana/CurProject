@@ -12,7 +12,7 @@ function getNewsItems() {
                           <p>These partnerships reflect our commitment to providing world-class education that combines Catholic values with global perspectives. Students who participate in these programs report greater cultural awareness, improved language skills, and enhanced employability after graduation.</p>
                           <p>"This initiative represents a major step forward in our mission to develop well-rounded leaders who can make positive contributions on the global stage," said University President Dr. Emmanuel Ntaganda.</p>
                           <p>Applications for the next cohort of exchange students open next month. Interested students should contact the International Relations Office for more information.</p>',
-            'image' => 'https://via.placeholder.com/400x300'
+            'image' => 'images/study1.jpg'
         ],
         [
             'id' => 2,
@@ -24,7 +24,7 @@ function getNewsItems() {
                           <p>"This center represents our commitment to integrating research excellence with our Catholic mission to care for our common home," said Dr. Marie Mukamana, Director of Research. "We aim to develop practical solutions that improve lives while protecting the environment for future generations."</p>
                           <p>The facility was made possible through a generous donation from international partners and the continued support of the Catholic Church in Rwanda.</p>
                           <p>Faculty and students interested in participating in research projects should submit proposals through the university\'s research portal.</p>',
-            'image' => 'https://via.placeholder.com/400x300'
+            'image' => 'images/study2.jpg'
         ],
         [
             'id' => 3,
@@ -36,7 +36,7 @@ function getNewsItems() {
                           <p>"My education at CUR taught me that excellence in medicine must be paired with compassion and a commitment to serving those most in need," said Dr. Habimana. "I\'m grateful for the foundation this university provided for my work."</p>
                           <p>The university will honor Dr. Habimana at this year\'s Alumni Gala, where he will deliver a keynote address on healthcare innovation in developing regions.</p>
                           <p>Current students interested in career paths in public health and rural medicine are encouraged to attend this special event.</p>',
-            'image' => 'https://via.placeholder.com/400x300'
+            'image' => 'images/study3.jpg'
         ]
     ];
 }

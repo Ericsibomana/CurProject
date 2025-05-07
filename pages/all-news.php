@@ -2,6 +2,7 @@
 $base_path = dirname(__DIR__);
 $web_root = "../"; 
 
+
 require_once $base_path . '/data/news.php';
 require_once $base_path . '/components/NewsCard.php';
 
@@ -17,20 +18,6 @@ $page_title = 'All News - Catholic University of Rwanda';
     <title><?php echo $page_title; ?></title>
     <!-- Include your CSS files here -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        .text-primary {
-            color: #00205B; 
-        }
-        .bg-primary {
-            background-color: #00205B; 
-        }
-        .hover\:bg-primary-dark:hover {
-            background-color: #001845; 
-        }
-        .border-primary {
-            border-color: #00205B;
-        }
-    </style>
 </head>
 <body>
     <!-- Header -->

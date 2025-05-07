@@ -50,7 +50,7 @@ $site_url = $web_root;
             
             <!-- Featured Image -->
             <div class="mb-6">
-                <img src="<?php echo $article['image']; ?>" alt="<?php echo $article['title']; ?>" class="w-full h-auto rounded">
+            <img src="<?php echo $web_root . $article['image']; ?>" alt="<?php echo $article['title']; ?>" class="w-full h-auto rounded">
             </div>
             
             <!-- Article Content -->
@@ -79,6 +79,6 @@ $site_url = $web_root;
     $site_url = $web_root;
     include $base_path . '/components/Footer.php'; 
     ?>
-    
+    <script src="<?php echo $web_root; ?>assets/script.js"></script>
 </body>
 </html>
