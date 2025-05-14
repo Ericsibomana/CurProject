@@ -1,6 +1,3 @@
-<?php 
-// Add DOCTYPE and HTML head with Tailwind CSS CDN before including Header
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,19 +12,75 @@
 $base_path = dirname(__DIR__);
 $web_root = "../"; 
 
-// Include components and data
+// Include components and database config
+include $base_path . '/includes/config.php'; // Database connection
 include $base_path . '/components/Header.php'; 
-include $base_path . '/components/CourseCard.php'; 
-include $base_path . '/data/courses.php'; 
 
-$allCategories = getCategories();
+// Get all courses function - works with your courses table
+function getAllCourses() {
+    global $conn;
+    global $web_root;
+    
+    // Using the courses table as seen in the screenshot
+    $query = "SELECT id, title, instructor, duration, description, image, created_at 
+              FROM courses 
+              ORDER BY created_at DESC";
+    
+    $result = mysqli_query($conn, $query);
+    
+    $courses = [];
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $courses[] = [
+                'id' => $row['id'],
+                'title' => $row['title'],
+                'instructor' => $row['instructor'],
+                'duration' => $row['duration'],
+                'description' => $row['description'],
+                'image' => $row['image'],
+                'created_at' => $row['created_at']
+            ];
+        }
+    } else {
+        // Handle database query errors
+        echo "<div class='bg-red-100 text-red-700 p-3 rounded'>Database error: " . mysqli_error($conn) . "</div>";
+    }
+    
+    return $courses;
+}
 
-// Map numeric IDs to string keys used in $courses
-$categoryMap = [
-    1 => 'foundation',
-    2 => 'advanced',
-    3 => 'specialized'
-];
+// Simple function to render a course card
+function renderCourseCard($id, $title, $description, $instructor, $duration, $image) {
+    global $web_root;
+    ?>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="h-48 overflow-hidden">
+            <?php if ($image): ?>
+                <img src="<?php echo $web_root . 'uploads/courses/' . $image; ?>" alt="<?php echo $title; ?>" class="w-full h-full object-cover">
+            <?php else: ?>
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">No image available</span>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="p-6">
+            <h3 class="text-xl font-bold mb-2"><?php echo $title; ?></h3>
+            <div class="flex items-center mb-2">
+                <span class="text-gray-700 font-medium">Instructor:</span>
+                <span class="ml-2 text-gray-600"><?php echo $instructor; ?></span>
+            </div>
+            <div class="flex items-center mb-4">
+                <span class="text-gray-700 font-medium">Duration:</span>
+                <span class="ml-2 text-gray-600"><?php echo $duration; ?></span>
+            </div>
+            <p class="text-gray-700 mb-4"><?php echo substr($description, 0, 120) . (strlen($description) > 120 ? '...' : ''); ?></p>
+            <a href="<?php echo $web_root; ?>pages/course-single.php?id=<?php echo $id; ?>" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Learn More</a>
+        </div>
+    </div>
+    <?php
+}
+
+$allCourses = getAllCourses();
 ?>
 
 <!-- Page Banner -->
@@ -44,7 +97,7 @@ $categoryMap = [
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 class="text-2xl font-bold text-blue-800 mb-4">Course Programs</h2>
             <p class="text-gray-600 mb-6">
-                The Center for Entrepreneurship offers over 200 courses across various disciplines, providing students with the knowledge, skills, and mindset needed to succeed in today's dynamic business environment.
+                The Center for Entrepreneurship offers courses across various disciplines, providing students with the knowledge, skills, and mindset needed to succeed in today's dynamic business environment.
             </p>
             <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
                 <p class="font-medium">Our courses are designed to cater to students at all levels, from beginners exploring entrepreneurial concepts to advanced entrepreneurs refining their business strategies.</p>
@@ -53,62 +106,35 @@ $categoryMap = [
     </div>
 </div>
 
-<!-- Course Categories -->
+<!-- All Courses Section -->
 <div class="container mx-auto px-4 py-8 mb-12">
-    <div class="max-w-4xl mx-auto">
-        <h2 class="text-2xl font-bold text-center mb-8">Course Categories</h2>
-        
-        <div class="grid md:grid-cols-3 gap-6">
-            <?php foreach ($allCategories as $category): ?>
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="bg-blue-800 text-white p-4">
-                    <h3 class="text-xl font-semibold"><?php echo $category['name']; ?></h3>
-                </div>
-                <div class="p-6">
-                    <p class="mb-4"><?php echo $category['description']; ?></p>
-                    <a href="#category-<?php echo $category['id']; ?>" class="text-blue-600 hover:underline font-medium flex items-center">
-                        View Courses
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</div>
-
-<?php
-// Loop through categories to display courses for each
-foreach ($allCategories as $category):
-    $categoryId = $category['id'];
-    $categoryName = $category['name'];
-    $categoryKey = $categoryMap[$categoryId]; // Map numeric ID to key
-    $categoryCourses = getCoursesByCategory($categoryKey);
-?>
-<!-- <?php echo $categoryName; ?> Courses Section -->
-<div id="category-<?php echo $categoryId; ?>" class="container mx-auto px-4 py-8 <?php echo ($categoryKey === 'specialized') ? 'mb-12' : ''; ?>">
     <div class="max-w-6xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6 text-blue-800"><?php echo $categoryName; ?> Courses</h2>
+        <h2 class="text-2xl font-bold mb-6 text-blue-800">Available Courses</h2>
         
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php 
-            foreach ($categoryCourses as $course) {
-                renderCourseCard(
-                    $course['id'], // Pass the course ID as the first parameter
-                    $course['title'],
-                    $course['description'],
-                    $course['level'],
-                    $course['duration'],
-                    $course['image']
-                );
-            }
+            if (empty($allCourses)): 
+            ?>
+                <div class="col-span-3 text-center py-8 bg-gray-100 rounded-lg">
+                    <p class="text-gray-600">No courses available yet. Check back soon for new offerings.</p>
+                </div>
+            <?php
+            else:
+                foreach ($allCourses as $course) {
+                    renderCourseCard(
+                        $course['id'],
+                        $course['title'],
+                        $course['description'],
+                        $course['instructor'],
+                        $course['duration'],
+                        $course['image']
+                    );
+                }
+            endif;
             ?>
         </div>
     </div>
 </div>
-<?php endforeach; ?>
 
 <?php
 // Include footer component

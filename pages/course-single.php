@@ -8,8 +8,30 @@ if (session_status() == PHP_SESSION_NONE) {
 $base_path = dirname(__DIR__);
 $web_root = "../";
 
-// Include the courses data
-include $base_path . '/data/courses.php';
+// Include database connection
+include $base_path . '/includes/config.php';
+
+// Function to get course by ID from database
+function getCourseById($id) {
+    global $conn;
+    global $web_root;
+    
+    $id = mysqli_real_escape_string($conn, $id);
+    $query = "SELECT id, title, instructor, duration, description, image, created_at 
+              FROM courses 
+              WHERE id = $id";
+    
+    $result = mysqli_query($conn, $query);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $course = mysqli_fetch_assoc($result);
+        // Add image path
+        $course['image'] = $web_root . 'uploads/courses/' . $course['image'];
+        return $course;
+    }
+    
+    return null;
+}
 
 if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "<p style='text-align: center; margin-top: 2rem;'>Invalid or missing course ID.</p>";
@@ -62,17 +84,6 @@ include $base_path . '/components/Header.php';
         <div class="max-w-4xl mx-auto">
             <h1 class="text-4xl font-bold mb-4"><?php echo htmlspecialchars($course['title']); ?></h1>
             <div class="flex flex-wrap gap-4 items-center">
-                <?php
-                $levelColor = match($course['level']) {
-                    'Beginner' => 'bg-green-500',
-                    'Intermediate' => 'bg-blue-600',
-                    'Advanced' => 'bg-purple-600',
-                    default => 'bg-blue-600',
-                };
-                ?>
-                <span class="<?php echo $levelColor; ?> text-white px-3 py-1 rounded-full text-sm font-medium">
-                    <?php echo htmlspecialchars($course['level']); ?>
-                </span>
                 <span class="flex items-center text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -98,15 +109,9 @@ include $base_path . '/components/Header.php';
         <div class="flex flex-col md:flex-row gap-8">
             <div class="md:w-1/3">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-8">
-                    <img src="<?php echo $course['image']; ?>" alt="<?php echo $course['title']; ?>" class="w-full h-auto">
+                    <img src="<?php echo $course['image']; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="w-full h-auto">
                     <div class="p-6 space-y-4">
                         <div class="bg-gray-50 p-4 rounded-md mb-4">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-gray-600">Price:</span>
-                                <span class="font-bold text-lg">
-                                    <?php echo isset($course['price']) ? $course['price'] : '$299'; ?>
-                                </span>
-                            </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Enrollment:</span>
                                 <span class="font-medium">Open</span>
@@ -125,11 +130,11 @@ include $base_path . '/components/Header.php';
                 <div class="bg-white rounded-lg shadow-md overflow-hidden p-6 mb-8">
                     <h2 class="text-2xl font-bold text-blue-800 mb-4">About This Course</h2>
                     
-                    <p class="text-gray-700 mb-6"><?php echo $course['description']; ?></p>
+                    <p class="text-gray-700 mb-6"><?php echo nl2br(htmlspecialchars($course['description'])); ?></p>
                     
                     <!-- Course highlights -->
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-                        <p class="font-medium">This course is perfect for <?php echo $course['level']; ?> level students interested in developing their entrepreneurship skills in <?php echo strtolower($course['title']); ?>.</p>
+                        <p class="font-medium">This course is perfect for students interested in developing their entrepreneurship skills in <?php echo strtolower(htmlspecialchars($course['title'])); ?>.</p>
                     </div>
                     
                     <!-- What you'll learn -->
@@ -140,7 +145,7 @@ include $base_path . '/components/Header.php';
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
-                                <span>Core principles and concepts in <?php echo strtolower($course['title']); ?></span>
+                                <span>Core principles and concepts in <?php echo strtolower(htmlspecialchars($course['title'])); ?></span>
                             </li>
                             <li class="flex items-start">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -171,7 +176,7 @@ include $base_path . '/components/Header.php';
                         <ul class="space-y-3">
                             <li class="flex justify-between">
                                 <span class="text-gray-600">Duration:</span>
-                                <span class="font-medium"><?php echo $course['duration']; ?></span>
+                                <span class="font-medium"><?php echo htmlspecialchars($course['duration']); ?></span>
                             </li>
                             <li class="flex justify-between">
                                 <span class="text-gray-600">Weekly Commitment:</span>
@@ -225,15 +230,16 @@ include $base_path . '/components/Header.php';
                     </div>
                 </div>
                 
-                <!-- Instructor section (if data available) -->
+                <!-- Instructor section -->
+                <?php if (!empty($course['instructor'])): ?>
                 <div class="bg-white rounded-lg shadow-md overflow-hidden p-6">
                     <h3 class="text-xl font-semibold mb-4">About the Instructor</h3>
                     <div class="flex items-center mb-4">
                         <div class="w-16 h-16 rounded-full bg-gray-300 mr-4 overflow-hidden">
-                            <img src="/images/instructor-placeholder.jpg" alt="Instructor" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/64'">
+                            <img src="<?php echo $web_root; ?>assets/images/instructor-placeholder.jpg" alt="Instructor" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/64'">
                         </div>
                         <div>
-                            <h4 class="font-medium text-lg"><?php echo isset($course['instructor']) ? $course['instructor'] : 'Course Instructor'; ?></h4>
+                            <h4 class="font-medium text-lg"><?php echo htmlspecialchars($course['instructor']); ?></h4>
                             <p class="text-gray-600">Faculty, Center for Entrepreneurship</p>
                         </div>
                     </div>
@@ -243,6 +249,7 @@ include $base_path . '/components/Header.php';
                         needed to succeed in today's competitive business environment.
                     </p>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
